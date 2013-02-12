@@ -1,0 +1,48 @@
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "groovy"
+apply plugin: "java"
+apply plugin: "maven"
+
+// defaultTasks 'clean', 'test'
+
+def enc = 'utf-8'
+
+[
+        compileJava,
+        compileGroovy,
+        compileTestJava,
+        compileTestGroovy
+].each { it.options.encoding = enc }
+[
+        compileGroovy,
+        compileTestGroovy
+].each { it.groovyOptions.encoding = enc }
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+//    mavenRepo urls:['http://localhost/maven', 'http://localhost/mvn']
+}
+
+dependencies {
+    groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+    testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+}
+
+task wrapper(type: Wrapper) { gradleVersion = '1.4' }
+
+jar {
+    from configurations.compile.collect {it.isDirectory()?it:zipTree(it)}
+}
+
+manifest.mainAttributes('Main-class' : 'TestMain')
+
+eclipse {
+    pathVariables GRADLE_REPO:file(System.properties['user.home'] + '/.gradle/cache')
+    // 以下プロジェクト参照が必要な場合の記述
+//    classpath.file.withXml { provider ->
+//        def node = provider.asNode()
+//        node.appendNode('classpathentry', [combineaccessrules:'false', kind: 'src', path:'/hoge-project'])
+//    }
+}
