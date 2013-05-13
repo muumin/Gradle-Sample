@@ -6,18 +6,9 @@ apply plugin: "maven"
 
 // defaultTasks 'clean', 'test'
 
-def enc = 'utf-8'
-
-[
-        compileJava,
-        compileGroovy,
-        compileTestJava,
-        compileTestGroovy
-].each { it.options.encoding = enc }
-[
-        compileGroovy,
-        compileTestGroovy
-].each { it.groovyOptions.encoding = enc }
+def defaultEncoding = 'UTF-8'
+tasks.withType(AbstractCompile) each { it.options.encoding = defaultEncoding }
+tasks.withType(GroovyCompile) each { it.groovyOptions.encoding = defaultEncoding }
 
 repositories {
     mavenLocal()
